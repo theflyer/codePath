@@ -22,92 +22,85 @@
 		color: black;
 	    
 	}
-	
-	div.output {
+
+    .output {
+        color:blue;
+        border: 1px solid blue;
 		width: 280px;
-		height: 100px;
-		background-color:white;
-		border: solid 2px blue;
+		height: 60px;
 		padding-top: 10px;
 		padding-left: 10px;
-		color: blue;
-	    
-	}
+    }
 	</style>
 
 	</head>
 	
 
 <body>
-<div class ="screen">
-	<div class="input">
-	<h2>TIP CALCULATOR</h2>
-	<form action = "" method="post">
-		<tr>
-			<td>BILL SUBTOTAL: </td>
-			<td>
-				<input type = "text" name="total" value="">
-			</td>
-			</tr>
-			<br></br>
-			<tr>
-			<td>TIP Percentages: </td> 
-			</tr>
-			<br></br>
-			<tr>
-			<td><input type="radio" name="percentage" value="10">10%</td>
-			<td><input type="radio" name="percentage" value="15">15%</td>
-			<td><input type="radio" name="percentage" value="20">20%</td>
-			</tr>
-			<br></br>
-		   <tr>
-			   <td><button type="submit">Submit</button></td>
-		   </tr>
-		   <br></br>
-		   <tr>
-			   <td>
-				
-				   <?php
-				   $t = $_POST['total'];
-				   if ($t > 0 ){
-				   $p = get_per();
-					   $total_r = $t + $t * $p;
-					   echo '<div class = "output">';
-					 echo "Tip: $".$t * $p. "<br>";
-					 echo "<br>";
-					  echo "Total: $".$total_r;
-					  echo '</div>';
-				 } else {
-					 echo "";
-				 }
-				   ?>
-				
-			   </td>
-			  </tr>
+	<div class= "screen">
+    <div class="input">
+    <h2>Tip Calculator</h2>
+      <?php
+          if(isset($_POST['subtotal']) && ((float)$_POST['subtotal']) > 0)
+          {
+              $tip = (float)$_POST["subtotal"] * (float)$_POST['Percentage'];
+              $total = $tip + (float)$_POST["subtotal"];
+          } else if(isset($_POST['subtotal']) && ((float)$_POST['subtotal']) <= 0)
+          {
+              $error = true;
+          }
+    ?>
+    <form action="" method="POST">
+        <span 
+		<?php 
+		if(isset($error) && $error) 
+		echo 'style="color:red; font-weight:bold;"'?>>Bill subtotal: $</span>
 		
+        <input type="text" name="subtotal" value="<?php 
+		if(isset($_POST['subtotal'])) 
+		echo $_POST['subtotal']?>"><br>
+		
+		<tr>
 	
-	</form>
-	<tr>
-		<td>
-		<?php
-		function get_per(){
-		   if ($_POST['percentage'] == "10"){
-			   $r = .10;
-		   }
-		   else if ($_POST['percentage'] == "15"){
-			   $r = .15;
-		   }
-		   else if ($_POST['percentage'] == "20"){
-			   $r = .20;
-		   }
-		   return $r;
-		}
-			
-		?>
-		</td>
+        <td>Tip percentage:</td>
+		<br></br>
 	</tr>
-	</div>
-</div>
+        <?php
+            if(isset($_POST['Percentage']))
+                $df_in = (float)$_POST['Percentage'];
+            else
+                $df_in = .15;
+				
+            $per_Arr = array(".10", ".15", ".20");
+			
+            for($i = 0; $i < 3; $i++)
+            {
+                if($per_Arr[$i] == $df_in)
+                    echo '<input type="radio" name="Percentage" value="'. $per_Arr[$i] .
+                    '" checked>' . $per_Arr[$i] . '%';
+                else
+                    echo '<input type="radio" name="Percentage" value="'. $per_Arr[$i] .
+                    '">' . $per_Arr[$i] . '%';
+            }
+        ?> 
+		<br></br>
+        <td><button type="submit">Submit</button></td></tr>
+	   </form>
+    
+	 <?php
+        if(isset($tip) && isset($total)){
+			
+		if (is_float($tip) && is_float($total))
+        {
+            echo '<div class="output">';
+			echo "Tip: $" . number_format($tip, 2). "<br>";
+            echo "Total: $" . number_format($total, 2);
+			echo "</div> <br>";
+        }
 
+		}
+    ?>
+    </div>
+	</div>
 </body>
 </html>
